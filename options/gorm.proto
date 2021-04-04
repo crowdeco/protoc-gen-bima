@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package gorm;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/crowdeco/protoc-gen-bima/options";
+
+extend google.protobuf.MessageOptions {
+  optional GormMessageOptions opts = 52119;
+}
+
+message GormMessageOptions {
+  required string model = 1;
+}
