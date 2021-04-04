@@ -2,6 +2,12 @@
 
 Plugin ini digunakan bersamaan dengan skeleton bima
 
+- Install
+
+```
+go get github.com/crowdeco/protoc-gen-bima
+```
+
 - Tambahkan ke proto_gen.sh
 
 ```
