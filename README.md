@@ -8,6 +8,27 @@ Plugin ini digunakan bersamaan dengan skeleton bima
 go get github.com/crowdeco/protoc-gen-bima
 ```
 
+- Modifikasi file proto
+
+```
+syntax = "proto3";
+
+package grpcs;
+
+import ...
+import "protoc-gen-bima/options/gorm.proto";
+
+option go_package = ".;grpcs";
+
+message Category {
+    option (gorm.opts) = {
+        model: "github.com/crowdeco/skeleton/categories/models;Category"
+    };
+    string id = 1;
+    string name = 2;
+}
+```
+
 - Tambahkan ke proto_gen.sh
 
 ```
