@@ -8,6 +8,18 @@ Plugin ini digunakan bersamaan dengan skeleton bima
 go get github.com/crowdeco/protoc-gen-bima
 ```
 
+- Tambahkan ke folder libs
+
+```
+- libs/
+    - bima/
+    - google/
+    - protoc-gen-bima/
+        - options/
+            gorm.proto
+    - protoc-gen-openapiv2/
+```
+
 - Modifikasi file proto
 
 ```
