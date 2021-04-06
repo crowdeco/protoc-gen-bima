@@ -60,8 +60,8 @@ var sqlTypes = map[string]string{
 	"sql.NullTime":    "Time",
 }
 
-var status200 = []string{"StatusOK", "StatusCreated", "StatusNoContent"}
-var status400 = []string{"StatusBadRequest", "StatusNotFound"}
+var statusOk = []string{"StatusOK", "StatusCreated", "StatusNoContent"}
+var statusNotOk = []string{"StatusBadRequest", "StatusNotFound", "StatusInternalServerError"}
 
 type BimaPlugin struct {
 	*protogen.Plugin
@@ -255,7 +255,7 @@ func (p *BimaPlugin) genResponseStatusMethod(g *protogen.GeneratedFile, m *proto
 					g.QualifiedGoIdent(protogen.GoIdent{
 						GoImportPath: "net/http",
 					})
-					for _, status := range status200 {
+					for _, status := range statusOk {
 						g.P("func (x *", m.GoIdent, ") ", msg.GoIdent, status, "() (*", msg.GoIdent, ", error) {")
 						g.P("return &", msg.GoIdent, "{")
 						g.P("Code: http.", status, ",")
@@ -266,7 +266,7 @@ func (p *BimaPlugin) genResponseStatusMethod(g *protogen.GeneratedFile, m *proto
 						g.P("}")
 						g.P()
 					}
-					for _, status := range status400 {
+					for _, status := range statusNotOk {
 						g.P("func (x *", m.GoIdent, ") ", msg.GoIdent, status, "(err error) (*", msg.GoIdent, ", error) {")
 						g.P("return &", msg.GoIdent, "{")
 						g.P("Code: http.", status, ",")
@@ -295,8 +295,12 @@ func (p *BimaPlugin) genResponseStatusFunc(g *protogen.GeneratedFile, m *protoge
 				g.QualifiedGoIdent(protogen.GoIdent{
 					GoImportPath: "net/http",
 				})
-				for _, status := range status200 {
-					g.P("func ", m.GoIdent, status, "(d ", p, field.Message.GoIdent, ") (*", m.GoIdent, ", error) {")
+				for _, status := range statusOk {
+					if status == "StatusNoContent" {
+						g.P("func ", m.GoIdent, status, "() (*", m.GoIdent, ", error) {")
+					} else {
+						g.P("func ", m.GoIdent, status, "(d ", p, field.Message.GoIdent, ") (*", m.GoIdent, ", error) {")
+					}
 					g.P("return &", m.GoIdent, "{")
 					g.P("Code: http.", status, ",")
 					if status != "StatusNoContent" {
@@ -306,7 +310,7 @@ func (p *BimaPlugin) genResponseStatusFunc(g *protogen.GeneratedFile, m *protoge
 					g.P("}")
 					g.P()
 				}
-				for _, status := range status400 {
+				for _, status := range statusNotOk {
 					g.P("func ", m.GoIdent, status, "(d ", p, field.Message.GoIdent, ", err error) (*", m.GoIdent, ", error) {")
 					g.P("return &", m.GoIdent, "{")
 					g.P("Code: http.", status, ",")
